@@ -140,8 +140,8 @@ public class Life {
         fillNear();
 
 // генерация того, что нам надо - обязательно
-//        generateRandomLiveCells();
-        generate_symmetric();
+        generateRandomLiveCells();
+//        generate_symmetric();
 //        generateSimmetricFigure();
 //        generate_symmetric_x();
 //        generate_1();
@@ -154,8 +154,8 @@ public class Life {
     void restart() {
         check = new Check();
         clearArray();
-        generate_symmetric();
-//        generateRandomLiveCells();
+//        generate_symmetric();
+        generateRandomLiveCells();
 //        generateSimmetricFigure();
 //        generate_symmetric_x();
 //        generate_1();

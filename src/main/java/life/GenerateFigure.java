@@ -25,6 +25,8 @@ package life;
  * SOFTWARE.
  */
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -147,7 +149,7 @@ class ValtrAlgorithm {
     }
 
     // java implementation of https://en.wikipedia.org/wiki/Even–odd_rule
-    static boolean isInsideByEvenOddRule(int x, int y, List<Coordinate> polygon){
+    static boolean isInsideByEvenOddRule(int x, int y, @NotNull List<Coordinate> polygon){
         boolean result = false;
         int j = polygon.size() - 1;
         for (int i = 0; i < polygon.size(); i++) {

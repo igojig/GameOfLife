@@ -10,7 +10,7 @@ public interface Config {
 
     int DELAY = 5;
 
-    boolean RULE = false;
+    boolean RULE = true;
 
     int MAX_ELEMENTS=30;
 

@@ -70,8 +70,8 @@ public class Window extends JFrame {
 
                     System.out.println("Possible repeated cycle " + Life.Info.life_step + " Match: " + Life.Info.isRepeated.getAsInt() + " Restart: " + Life.Info.restart_count);
                     Life.Info.isRepeated= OptionalInt.empty();
-                    life.restart();
-                    timer.start();
+//                    life.restart();
+//                    timer.start();
                 }
             }
         });

@@ -4,6 +4,7 @@ package life;
 public class Main {
     public static void main(String[] args)  {
 
+
         Life life=new Life(Config.X_S, Config.Y_S, Config.RND);
         new Window(life);
 
