@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="gui" />
+        <module name="life_core" />
+        <module name="life" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="demoFX" target="17" />
+      <module name="life (1)" target="17" />
+      <module name="life (1) (ru.igojig)" target="17" />
+      <module name="life (2)" target="17" />
+      <module name="life (2) (org.example)" target="17" />
+      <module name="life-core" target="17" />
+      <module name="start_for_interview" target="17" />
+      <module name="untitled" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+</project>
