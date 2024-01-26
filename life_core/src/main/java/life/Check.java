@@ -1,9 +1,6 @@
 package life;
 
-import java.util.LinkedList;
-import java.util.Objects;
-import java.util.OptionalInt;
-
+import java.util.*;
 
 
 public class Check {
@@ -11,7 +8,7 @@ public class Check {
     LinkedList<Integer> list = new LinkedList<>();
 
     void add(int count) {
-        if (list.size() >= Config.MAX_ELEMENTS)
+        if (list.size() >= Game.MAX_ELEMENTS)
             list.poll();
         list.add(count);
     }
@@ -24,8 +21,8 @@ public class Check {
 
         OptionalInt optionalInt=OptionalInt.empty();
 
-        if(list.size()<Config.MAX_ELEMENTS) {
-            return optionalInt;
+        if(list.size()<Game.MAX_ELEMENTS) {
+            return OptionalInt.empty();
         }
 
         int len = 7;
@@ -46,7 +43,7 @@ public class Check {
         int cycle=1;
         boolean flag=true;
 
-        while (len * (cycle + 1) <= Config.MAX_ELEMENTS) {
+        while (len * (cycle + 1) <= Game.MAX_ELEMENTS) {
             int from = (cycle - 1) * len;
             int to = cycle * len;
             int next_from = cycle * len;

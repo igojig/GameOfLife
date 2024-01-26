@@ -18,11 +18,16 @@ public class Window extends JFrame {
 
     Timer timer;
 
+    JTextField jTextField=new JTextField();
+
 
     public Window(Life life) {
 
+        this.setLayout(new BorderLayout());
 
         this.life = life;
+
+        jTextField=new JTextField();
 
         jPanel = new JPanel() {
             @Override
@@ -30,18 +35,18 @@ public class Window extends JFrame {
 
                 super.paintComponent(g);
 //                if (life.cellArrayCopy != null) {
-                for (int x = 0; x < Config.X_S; x++)
-                    for (int y = 0; y < Config.Y_S; y++) {
+                for (int x = 0; x < Game.WIDTH; x++)
+                    for (int y = 0; y < Game.HEIGHT; y++) {
                         g.setColor(life.cellArray[x][y].cellStatus.getColor());
 //                        g.setColor(getColor(life.cellArray[x][y]));
-                        g.fillRect(x * Config.SIZE, y * Config.SIZE, Config.SIZE, Config.SIZE);
+                        g.fillRect(x * Game.CELL_SIZE, y * Game.CELL_SIZE, Game.CELL_SIZE, Game.CELL_SIZE);
                     }
                 g.setColor(Color.DARK_GRAY);
-                for (int x = 0; x <= Config.X_S; x++) {
-                    g.drawLine(x * Config.SIZE, 0, x * Config.SIZE, Config.Y_S * Config.SIZE);
+                for (int x = 0; x <= Game.WIDTH; x++) {
+                    g.drawLine(x * Game.CELL_SIZE, 0, x * Game.CELL_SIZE, Game.HEIGHT * Game.CELL_SIZE);
                 }
-                for (int y = 0; y <= Config.Y_S; y++) {
-                    g.drawLine(0, y * Config.SIZE, Config.X_S * Config.SIZE, y * Config.SIZE);
+                for (int y = 0; y <= Game.HEIGHT; y++) {
+                    g.drawLine(0, y * Game.CELL_SIZE, Game.WIDTH * Game.CELL_SIZE, y * Game.CELL_SIZE);
                 }
 
             }
@@ -49,7 +54,7 @@ public class Window extends JFrame {
 
         };
 
-        timer = new Timer(Config.DELAY, new ActionListener() {
+        timer = new Timer(Game.FX_TIMER_DELAY, new ActionListener() {
             boolean b = true;
 
             @Override
@@ -68,7 +73,8 @@ public class Window extends JFrame {
                 if(Life.Info.isRepeated.isPresent()){
                     timer.stop();
 
-                    System.out.println("Possible repeated cycle " + Life.Info.life_step + " Match: " + Life.Info.isRepeated.getAsInt() + " Restart: " + Life.Info.restart_count);
+//                    System.out.println("Possible repeated cycle " + Life.Info.life_step + " Match: " + Life.Info.isRepeated.getAsInt() + " Restart: " + Life.Info.restart_count);
+                    jTextField.setText("Possible repeated cycle " + Life.Info.life_step + " Match: " + Life.Info.isRepeated.getAsInt() + " Restart: " + Life.Info.restart_count);
                     Life.Info.isRepeated= OptionalInt.empty();
 //                    life.restart();
 //                    timer.start();
@@ -77,8 +83,12 @@ public class Window extends JFrame {
         });
 
         jPanel.setBackground(Color.BLACK);
-        jPanel.setPreferredSize(new Dimension(Config.X_S * Config.SIZE, Config.Y_S * Config.SIZE));
-        add(jPanel);
+        jPanel.setPreferredSize(new Dimension(Game.WIDTH* Game.CELL_SIZE, Game.HEIGHT * Game.CELL_SIZE));
+        add(jPanel, BorderLayout.NORTH);
+
+        jTextField.setEditable(false);
+        add(jTextField, BorderLayout.SOUTH);
+
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         pack();
 

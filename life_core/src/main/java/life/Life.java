@@ -1,79 +1,17 @@
 package life;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.OptionalInt;
 import java.util.concurrent.*;
-import java.util.function.Consumer;
-
-class Func implements Runnable {
-    int x_start;
-    int x_end;
-    int y_start;
-    int y_end;
-    Cell[][] cells;
-    Consumer<Cell> cellConsumer;
-
-
-    public Func(int x_start, int x_end, int y_start, int y_end, Cell[][] cells, Consumer<Cell> cellConsumer) {
-        this.x_start = x_start;
-        this.x_end = x_end;
-        this.y_start = y_start;
-        this.y_end = y_end;
-        this.cells = cells;
-        this.cellConsumer=cellConsumer;
-    }
-
-    @Override
-    public void run() {
-        for (int x = x_start; x < x_end; x++)
-            for (int y = y_start; y < y_end; y++) {
-//                cells[x][y].step_1();
-                cellConsumer.accept(cells[x][y]);
-            }
-    }
-}
-
-class Func2 implements Runnable {
-    int x_start;
-    int x_end;
-    int y_start;
-    int y_end;
-    Cell[][] cells;
-
-    public Func2(int x_start, int x_end, int y_start, int y_end, Cell[][] cells) {
-        this.x_start = x_start;
-        this.x_end = x_end;
-        this.y_start = y_start;
-        this.y_end = y_end;
-        this.cells = cells;
-    }
-
-    @Override
-    public void run() {
-        for (int x = x_start; x < x_end; x++)
-            for (int y = y_start; y < y_end; y++) {
-                cells[x][y].step_2();
-            }
-    }
-}
-
 
 
 public class Life {
 
-//    static int dimension_x;
-//    static int dimension_y;
-//
-//    static int random_count;
-
-    ExecutorService executor = Executors.newFixedThreadPool(8);
-
-
     Check check = new Check();
 
     Cell[][] cellArray;
-
-    List<Runnable> runnableList1=new ArrayList<>();
-    List<Runnable> runnableList2=new ArrayList<>();
 
     static class Info {
         // макс. кол-во поколений, когда клетка непрерывно жива
@@ -99,41 +37,10 @@ public class Life {
 
     }
 
-      void divide( int parts_x, int parts_y){
-        List<Integer> xVect=new ArrayList<>();
-        List<Integer> yVect=new ArrayList<>();
-
-        int len_x=Config.X_S/parts_x;
-        int len_y=Config.Y_S/parts_y;
-
-        for(int i=0;i<=parts_x;i++){
-            xVect.add(i*len_x);
-        }
-        if(Config.X_S%parts_x!=0){
-            xVect.set(xVect.size()-1, Config.X_S);
-        }
-
-        for(int i=0;i<=parts_y;i++){
-            yVect.add(i*len_y);
-        }
-        if(Config.Y_S%parts_y!=0){
-            yVect.set(yVect.size()-1, Config.Y_S);
-        }
 
 
-        for(int i=1;i<xVect.size();i++)
-            for(int j=1;j<yVect.size();j++){
-                runnableList1.add(new Func(xVect.get(i-1),xVect.get(i), yVect.get(j-1), yVect.get(j), cellArray, Cell::step_1));
-                runnableList2.add(new Func(xVect.get(i-1),xVect.get(i), yVect.get(j-1), yVect.get(j), cellArray,  Cell::step_2));
-            }
+    Life() {
 
-    }
-
-
-        Life(int dimension_x, int dimension_y, int random_count) {
-//        Life.dimension_x = dimension_x;
-//        Life.dimension_y = dimension_y;
-//        Life.random_count = random_count;
 
         initArrays();
         fillCellArray();
@@ -146,7 +53,7 @@ public class Life {
 //        generate_symmetric_x();
 //        generate_1();
 
-        divide(2,2);
+//        divide(2, 2);
 
         getStatistics();
     }
@@ -160,7 +67,7 @@ public class Life {
 //        generate_symmetric_x();
 //        generate_1();
 
-        getStatistics();
+//        getStatistics();
     }
 
     void clearArray() {
@@ -175,50 +82,80 @@ public class Life {
 
 
     private void initArrays() {
-        cellArray = new Cell[Config.X_S][Config.Y_S];
+        cellArray = new Cell[Game.WIDTH][Game.HEIGHT];
 
     }
 
     private void fillCellArray() {
-        for (int x = 0; x < Config.X_S; x++)
-            for (int y = 0; y < Config.Y_S; y++) {
+        for (int x = 0; x < Game.WIDTH; x++)
+            for (int y = 0; y < Game.HEIGHT; y++) {
                 cellArray[x][y] = new Cell(x, y);
             }
     }
 
     void fillNear() {
-        for (int x = 0; x < Config.X_S; x++)
-            for (int y = 0; y < Config.Y_S; y++) {
+        for (int x = 0; x < Game.WIDTH; x++)
+            for (int y = 0; y < Game.HEIGHT; y++) {
                 cellArray[x][y].fill(cellArray);
             }
     }
 
 
     void getStatistics() {
-//        long t1=System.currentTimeMillis();
 
-        long countLiveCells = Arrays.stream(cellArray)
-                .flatMap(Arrays::stream)
-                .filter(o -> o.cellStatus == CellStatus.LIVE)
-                .count();
+//        long countLiveCells = Arrays.stream(cellArray)
+//                .flatMap(Arrays::stream)
+//                .filter(o -> o.cellStatus == CellStatus.LIVE)
+//                .count();
+        int countLiveCells = 0;
+        int maxGeneration = -1;
+        int max = -1;
+        int maxGenerationCount =-1;
+
+        for (int x = 0; x < Game.WIDTH; ++x) {
+            for (int y = 0; y < Game.HEIGHT; ++y) {
+                if (cellArray[x][y].cellStatus == CellStatus.LIVE) {
+                    ++countLiveCells;
+                }
 
 
-        Optional<Integer> maxGeneration = Arrays.stream(cellArray)
-                .flatMap(Arrays::stream)
-                .map(o -> o.statistics.generationCount)
-                .filter(o -> o > -1)
-                .max(Comparator.naturalOrder());
+                if (cellArray[x][y].statistics.generationCount > max) {
+                    max = cellArray[x][y].statistics.generationCount;
+                }
 
 
-        long maxGenerationCount
-                = Arrays.stream(cellArray)
-                .flatMap(Arrays::stream)
-                .filter(o -> o.statistics.generationCount == maxGeneration.orElse(0))
-                .count();
+            }
+        }
+        maxGeneration = max;
+
+        for (int x = 0; x < Game.WIDTH; ++x) {
+            for (int y = 0; y < Game.HEIGHT; ++y) {
+                if(maxGeneration!=-1){
+                    if(cellArray[x][y].statistics.generationCount==maxGeneration){
+                        ++maxGenerationCount;
+                    }
+                }
+
+            }
+        }
+
+
+//        Optional<Integer> maxGeneration = Arrays.stream(cellArray)
+//                .flatMap(Arrays::stream)
+//                .map(o -> o.statistics.generationCount)
+//                .filter(o -> o > -1)
+//                .max(Comparator.naturalOrder());
+
+
+//        long maxGenerationCount
+//                = Arrays.stream(cellArray)
+//                .flatMap(Arrays::stream)
+//                .filter(o -> o.statistics.generationCount == maxGeneration.orElse(0))
+//                .count();
 //                .collect(Collectors.groupingBy(o->max_generation_count));
 //
         Info.live_cells_count = (int) countLiveCells;
-        Info.max_generation = maxGeneration.orElse(0);
+        Info.max_generation = maxGeneration;
         Info.count_of_max_generations = (int) maxGenerationCount;
 
         check.add((int) countLiveCells);
@@ -262,55 +199,11 @@ public class Life {
 
     }
 
-    void parallel_step_1() {
-//        int x1 = 0;
-//        int x2 = Config.X_S / 2;
-//        int y1 = 0;
-//        int y2 = Config.Y_S / 2;
 
-//        Runnable r1 = new Func(0, Config.X_S / 2, 0, Config.Y_S / 2, cellArray);
-//        Runnable r2 = new Func(Config.X_S / 2, Config.X_S, 0,  Config.Y_S / 2, cellArray);
-//        Runnable r3 = new Func(0, Config.X_S / 2, Config.Y_S / 2, Config.Y_S, cellArray);
-//        Runnable r4 = new Func(Config.X_S / 2, Config.X_S, Config.Y_S / 2, Config.Y_S, cellArray);
-
-        List<Future<?>> fl=new ArrayList<>();
-        for(Runnable r: runnableList1){
-            fl.add(executor.submit(r));
-        }
-
-
-        try {
-            for(Future<?> f: fl){
-                f.get();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
-
-    void parallel_step_2(){
-
-        List<Future<?>> fl=new ArrayList<>();
-        for(Runnable r: runnableList2){
-            fl.add(executor.submit(r));
-        }
-
-        try {
-            for(Future<?> f: fl){
-                f.get();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        }
-    }
 
     void step_1() {
-        for (int x = 0; x < Config.X_S; x++)
-            for (int y = 0; y < Config.Y_S; y++) {
+        for (int x = 0; x < Game.WIDTH; x++)
+            for (int y = 0; y < Game.HEIGHT; y++) {
                 cellArray[x][y].step_1();
             }
 //        Arrays.stream(cellArray).
@@ -320,8 +213,8 @@ public class Life {
     }
 
     void step_2() {
-        for (int x = 0; x < Config.X_S; x++)
-            for (int y = 0; y < Config.Y_S; y++) {
+        for (int x = 0; x < Game.WIDTH; x++)
+            for (int y = 0; y < Game.HEIGHT; y++) {
                 cellArray[x][y].step_2();
             }
 //        Arrays.stream(cellArray).
@@ -334,17 +227,17 @@ public class Life {
     void generateRandomLiveCells() {
 
         int count = 0;
-        while (count < Config.RND) {
+        while (count < Game.RANDOM_CELLS) {
 
-            int x = ThreadLocalRandom.current().nextInt(Config.X_S);
-            int y = ThreadLocalRandom.current().nextInt(Config.Y_S);
+            int x = ThreadLocalRandom.current().nextInt(Game.WIDTH);
+            int y = ThreadLocalRandom.current().nextInt(Game.HEIGHT);
             if (cellArray[x][y].cellStatus != CellStatus.LIVE) {
                 cellArray[x][y].cellStatus = CellStatus.LIVE;
                 cellArray[x][y].statistics.generationCount = 1;
                 ++count;
             }
         }
-        Info.live_cells_count = Config.RND;
+        Info.live_cells_count = Game.RANDOM_CELLS;
     }
 
     void generate_1() {
@@ -400,15 +293,15 @@ public class Life {
                 arr.add(new Coordinate(effective_x, effective_y));
             }
         }
-        int dx = Config.X_S / 2 - len_x / 2;
-        int dy = Config.Y_S / 2 - len_y / 2;
+        int dx = Game.WIDTH / 2 - len_x / 2;
+        int dy = Game.HEIGHT / 2 - len_y / 2;
 
         for (Coordinate c : arr) {
             cellArray[dx + c.x][dy + c.y].cellStatus = CellStatus.LIVE;
             cellArray[dx + c.x][dy + c.y].statistics.generationCount = 1;
 
-            int new_x = (Config.X_S / 2) * 2 - 1 - c.x - dx;
-            int new_y = (Config.Y_S / 2) * 2 - 1 - c.y - dy;
+            int new_x = (Game.WIDTH / 2) * 2 - 1 - c.x - dx;
+            int new_y = (Game.HEIGHT / 2) * 2 - 1 - c.y - dy;
 
             cellArray[new_x][dy + c.y].cellStatus = CellStatus.LIVE;
             cellArray[new_x][dy + c.y].statistics.generationCount = 1;
@@ -453,8 +346,8 @@ public class Life {
             }
         }
 
-        int dx = Config.X_S / 2 - x_dimension / 2;
-        int dy = Config.Y_S / 2 - y_dimension / 2;
+        int dx = Game.WIDTH / 2 - x_dimension / 2;
+        int dy = Game.HEIGHT / 2 - y_dimension / 2;
 
         for (int x = 0; x < x_dimension; x++) {
             for (int y = 0; y < y_dimension; y++) {
@@ -471,15 +364,15 @@ public class Life {
     void generate_symmetric() {
 
         int count = 0;
-        while (count < Config.RND/10 ) {
+        while (count < Game.RANDOM_CELLS / 10) {
 
-            int x = ThreadLocalRandom.current().nextInt(Config.X_S / 2);
-            int y = ThreadLocalRandom.current().nextInt(Config.Y_S / 2);
+            int x = ThreadLocalRandom.current().nextInt(Game.WIDTH / 2);
+            int y = ThreadLocalRandom.current().nextInt(Game.HEIGHT / 2);
             if (cellArray[x][y].cellStatus != CellStatus.LIVE) {
                 cellArray[x][y].cellStatus = CellStatus.LIVE;
                 cellArray[x][y].statistics.generationCount = 1;
-                int new_x = (Config.X_S / 2) * 2 - 1 - x;
-                int new_y = (Config.Y_S / 2) * 2 - 1 - y;
+                int new_x = (Game.WIDTH / 2) * 2 - 1 - x;
+                int new_y = (Game.HEIGHT / 2) * 2 - 1 - y;
 
                 cellArray[new_x][y].cellStatus = CellStatus.LIVE;
                 cellArray[new_x][y].statistics.generationCount = 1;
@@ -497,7 +390,7 @@ public class Life {
         }
 
 
-        Info.live_cells_count = Config.RND;
+        Info.live_cells_count = Game.RANDOM_CELLS;
 
     }
 

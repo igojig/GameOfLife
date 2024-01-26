@@ -3,10 +3,11 @@ package life;
 import java.awt.*;
 
 public enum CellStatus {
-    NONE(Color.black),
-    BORN(Color.GREEN),
-    LIVE(Color.white),
-    DEAD(Color.GRAY);
+
+    NONE(Color.black),  // клетка мертва
+    BORN(Color.GREEN),  // клетка родилась (должна появиться на следующем шаге)
+    LIVE(Color.white),  // клетка жива
+    DEAD(Color.GRAY);   // клетка должна умереть
 
     private final Color color;
 

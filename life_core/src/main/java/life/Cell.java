@@ -1,7 +1,5 @@
 package life;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Cell {
@@ -12,7 +10,8 @@ public class Cell {
     Statistics statistics;
 
 
-    List<Cell> nearCellsList = new ArrayList<>(8);
+//    List<Cell> nearCellsList = new ArrayList<>(8);
+    Cell[] nearCellsList=new Cell[8];
 
 
 //    public Cell(Cell cell) {
@@ -67,27 +66,32 @@ public class Cell {
 
         int x = coordinate.x;
         int y = coordinate.y;
+        int index=0;
         for (int dx = -1; dx <= 1; dx++)
             for (int dy = -1; dy <= 1; dy++) {
-                if (!Config.RULE) {
-                    if (isValidCoordinates(x + dx, y + dy) && !(dx == 0 && dy == 0))
-                        nearCellsList.add(cells[x + dx][y + dy]);
+                if (!Game.LOOPED_FIELD) {
+                    if (isValidCoordinates(x + dx, y + dy) && !(dx == 0 && dy == 0)){
+                        nearCellsList[index++]=cells[x + dx][y + dy];
+//                        nearCellsList.add(cells[x + dx][y + dy]);
+
+                    }
                 } else {
                     if (!(dx == 0 && dy == 0)) {
-                        nearCellsList.add(cells[(x + dx + Config.X_S) % Config.X_S][(y + dy + Config.Y_S) % Config.Y_S]);
+                        nearCellsList[index++]=cells[(x + dx + Game.WIDTH) % Game.WIDTH][(y + dy + Game.HEIGHT) % Game.HEIGHT];
+//                        nearCellsList.add(cells[(x + dx + Game.WIDTH) % Game.WIDTH][(y + dy + Game.HEIGHT) % Game.HEIGHT]);
                     }
                 }
             }
     }
 
     boolean isValidCoordinates(int x, int y) {
-        return x >= 0 && x < Config.X_S && y >= 0 && y < Config.Y_S;
+        return x >= 0 && x < Game.WIDTH && y >= 0 && y < Game.HEIGHT;
     }
 
     int calculateNearLiveCells() {
         int count = 0;
         for (Cell c : nearCellsList) {
-            if (c.cellStatus == CellStatus.LIVE || c.cellStatus == CellStatus.DEAD)
+            if (c!=null && (c.cellStatus == CellStatus.LIVE || c.cellStatus == CellStatus.DEAD))
                 ++count;
         }
         return count;

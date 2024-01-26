@@ -35,7 +35,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 
-class ValtrAlgorithm {
+public class ValtrAlgorithm {
 
     //    private static final Random RAND = new Random();
     private static final ThreadLocalRandom RAND = ThreadLocalRandom.current();
